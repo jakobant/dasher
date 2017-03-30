@@ -9,6 +9,7 @@ import subprocess
 import glob
 import urllib2
 import time
+import base64
 """
 sitess = { "sites": [
 { "url": "http://www.mbl.is", "time": 12, "type": "chrome", "zoom": 1.3 },
@@ -24,6 +25,22 @@ class Dasher:
         self.play_url=play_url
         self.one_player = None
         self.stop_now = False
+        self.play_url="https://elk.mikkari.net/roll/%s.json" % self.getMAC(self.getId())
+
+    def getId(self):
+        with open("/proc/net/route") as fh:
+            for line in fh:
+                fields = line.strip().split()
+                if fields[1] != '00000000' or not int(fields[3], 16) & 2:
+                    continue
+        return fields[0]
+
+    def getMAC(self, interface='eth0'):
+        try:
+            line = open('/sys/class/net/%s/address' %interface).read()
+        except:
+            line = "000000000000"
+        return base64.b64encode(line[0:17].replace(":",""))
 
     def wait_for_it(self, timer):
         while not self.stop_now and timer >0:
@@ -66,7 +83,7 @@ class Dasher:
             start="0"
         if site['type'] == "stream":
             if self.player == "mplayer":
-                subprocess.Popen(["/usr/local/bin/mplayer", "-fs", site['url']])
+                subprocess.Popen(["/usr/bin/mplayer", "-fs", site['url']])
             else:
                 subprocess.Popen(["omxplayer", "-o", "hdmi", "-b", site['url']])
         else:
@@ -78,7 +95,7 @@ class Dasher:
             file = self.get_download_file(self.get_id(site['url']))
             print(file)
             if self.player=="mplayer":
-                subprocess.Popen(["/usr/local/bin/mplayer", "-fs", file, "-ss", start])
+                subprocess.Popen(["mplayer", "-fs", file, "-ss", start])
             else:
                 subprocess.Popen(["omxplayer", "-o", "hdmi", "-b", file, "-l", start])
         t = threading.Thread(target=self.wait_for_it, args=[int(site['time'])])

@@ -10,7 +10,7 @@ import json
 import threading
 
 auth = HTTPBasicAuth()
-dasher = Dasher("mplayer", "/Users/jakobant")
+dasher = Dasher("mplayer", "/home/jakobant")
 
 class Loop:
     def __init__(self, dasher):
@@ -56,7 +56,7 @@ class Loop:
         self.stop_now = True
 
 ll = Loop(dasher)
-ll.switch(ll.get_next())
+#ll.switch(ll.get_next())
 
 app = Flask(__name__)
 
@@ -109,6 +109,6 @@ def set_show():
     ll.switch(data )
     return make_response(jsonify({'response': 'Success'}), 200)
 
-
+print ("debug")
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port='5555')
