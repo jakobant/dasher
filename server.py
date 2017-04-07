@@ -10,7 +10,7 @@ import json
 import threading
 
 auth = HTTPBasicAuth()
-dasher = Dasher("mplayer", "/home/jakobant")
+dasher = Dasher("mplayer", "/Users/jakobant")
 
 class Loop:
     def __init__(self, dasher):
@@ -18,15 +18,8 @@ class Loop:
         self.sites = self.dasher.get_json()
         self.ssize = len(self.sites['sites'])
         self.current = 0
-        self.one_thread = None
-        self.stop_now = False
-
-    def wait_for_it(self, timer):
-        while not self.stop_now and timer > 0:
-            timer = timer - 1
-            time.sleep(1)
-        if not self.stop_now:
-            self.start(self.get_next())
+        self.thread = None
+        self.is_mxplayer = False
 
     def get_next(self):
         x = self.current
@@ -35,28 +28,46 @@ class Loop:
             self.sites = self.dasher.get_json()
             self.ssize = len(self.sites['sites'])
             self.current = 0
+            self.sites = self.dasher.get_json()
+            self.ssize = len(self.sites['sites'])
         else:
             self.current = self.current + 1
         return site
 
-    def switch(self, site):
-        self.dasher.kill_mxplayer()
-        self.dasher.udisplay(site)
-        time.sleep(1)
-        self.wait_for_it(int(site['time']))
+    def switch(self):
+        self.start()
 
-    def start(self, site):
+    def clean_sites(self):
+        self.sites = { "sites": [] }
+        self.current = 0
+        self.ssize = 0
+
+    def add_to_playlist(self, site):
+        self.sites['sites'].append(site)
+        self.ssize = self.ssize + 1
+
+    def stop(self):
+        self.thread.cancel()
+        if self.is_mxplayer:
+            self.dasher.kill_mxplayer()
+
+    def start(self, site=None):
+        if self.thread:
+            self.thread.cancel()
+        if self.is_mxplayer:
+            self.dasher.kill_mxplayer()
+        if not site:
+            site = self.get_next()
+        if site['type'] in ['mxplayer', 'stream']:
+            self.is_mxplayer = True
         print(site)
-        self.stop_now=False
-        self.dasher.udisplay(site)
-        t = threading.Thread(target=self.wait_for_it, args=[int(site['time'])])
-        t.start()
+        time = self.dasher.udisplay(site)
+        self.thread = threading.Timer(time, self.start)
+        self.thread.start()
+        return site
 
-    def stop(self,):
-        self.stop_now = True
-
-ll = Loop(dasher)
-#ll.switch(ll.get_next())
+looper = Loop(dasher)
+looper.start()
 
 app = Flask(__name__)
 
@@ -78,26 +89,41 @@ def unauthorized():
 def index():
     return "Hello, World!"
 
+@app.route('/clear')
+@auth.login_required
+def clear():
+    looper.clean_sites()
+    return make_response(jsonify({'success': 'cleanig sites'}), 200)
+
 @app.route('/stop')
 @auth.login_required
 def stop():
-    ll.stop()
+    looper.stop()
     return make_response(jsonify({'success': 'stopping thread'}), 200)
-
 
 @app.route('/switch')
 @auth.login_required
 def get_index():
-    site =ll.get_next()
+    site = looper.start()
     print (site)
-    ll.switch(site)
     return make_response(jsonify(site), 200)
 
 @app.route('/sites')
 @auth.login_required
 def get_sites():
-    sites =ll.sites
+    sites = looper.sites
     return make_response(jsonify(sites), 200)
+
+@app.route('/playlist',  methods = ['POST'])
+@auth.login_required
+def add_playlist():
+    if request.headers['Content-Type'] != 'application/json':
+        return make_response(jsonify({'error': 'set Content-Type: application/json'}), 403)
+    data = request.json
+    print (data['url'])
+    looper.add_to_playlist(data)
+    return make_response(jsonify({'response': 'Success'}), 200)
+
 
 @app.route('/show',  methods = ['POST'])
 @auth.login_required
@@ -106,9 +132,9 @@ def set_show():
         return make_response(jsonify({'error': 'set Content-Type: application/json'}), 403)
     data = request.json
     print (data['url'])
-    ll.switch(data )
+    looper.start(data)
     return make_response(jsonify({'response': 'Success'}), 200)
 
 print ("debug")
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='5555')
+    app.run(host='0.0.0.0', port='5000')

@@ -10,6 +10,7 @@ import glob
 import urllib2
 import time
 import base64
+import pafy
 """
 sitess = { "sites": [
 { "url": "http://www.mbl.is", "time": 12, "type": "chrome", "zoom": 1.3 },
@@ -24,16 +25,21 @@ class Dasher:
         self.tab = self.chrome.tabs[0]
         self.play_url=play_url
         self.one_player = None
-        self.stop_now = False
+        self.thread = None
         self.play_url="https://elk.mikkari.net/roll/%s.json" % self.getMAC(self.getId())
 
     def getId(self):
-        with open("/proc/net/route") as fh:
-            for line in fh:
-                fields = line.strip().split()
-                if fields[1] != '00000000' or not int(fields[3], 16) & 2:
-                    continue
-        return fields[0]
+        try:
+            with open("/proc/net/route") as fh:
+                for line in fh:
+                    fields = line.strip().split()
+                    if fields[1] != '00000000' or not int(fields[3], 16) & 2:
+                        continue
+            return fields[0]
+        except:
+            #gguessin mac
+            return "en0"
+
 
     def getMAC(self, interface='eth0'):
         try:
@@ -41,12 +47,6 @@ class Dasher:
         except:
             line = "000000000000"
         return base64.b64encode(line[0:17].replace(":",""))
-
-    def wait_for_it(self, timer):
-        while not self.stop_now and timer >0:
-            timer = timer - 1
-            time.sleep(1)
-        self.kill_mxplayer()
 
     def get_json(self):
         try:
@@ -67,9 +67,10 @@ class Dasher:
 
     def udisplay(self, site):
         if site['type'] == "mxplayer" or site['type'] == "stream":
-            self.mxplayer(site)
+            return self.mxplayer(site)
         else:
             self.chromedisplay(site)
+            return int(site['time'])
 
     def chromedisplay(self, site):
         self.tab.set_url(site['url'])
@@ -77,16 +78,16 @@ class Dasher:
         self.tab.set_zoom(site['zoom'])
 
     def mxplayer(self, site):
-        try:
-            start=site['startat']
-        except:
-            start="0"
         if site['type'] == "stream":
             if self.player == "mplayer":
-                subprocess.Popen(["/usr/bin/mplayer", "-fs", site['url']])
+                subprocess.Popen(["/usr/local/bin/mplayer", "-cache", "128", "-fs", site['url']])
             else:
                 subprocess.Popen(["omxplayer", "-o", "hdmi", "-b", site['url']])
+            time = int(site['time'])
         else:
+            time, start = self.get_youtube_length(site)
+            print(time)
+            print(start)
             print(self.get_id(site['url']))
             file = self.get_download_file(self.get_id(site['url']))
             if file=="none":
@@ -95,11 +96,12 @@ class Dasher:
             file = self.get_download_file(self.get_id(site['url']))
             print(file)
             if self.player=="mplayer":
-                subprocess.Popen(["mplayer", "-fs", file, "-ss", start])
+                subprocess.Popen(["/usr/local/bin/mplayer", "-fs", file, "-ss", start])
             else:
                 subprocess.Popen(["omxplayer", "-o", "hdmi", "-b", file, "-l", start])
-        t = threading.Thread(target=self.wait_for_it, args=[int(site['time'])])
-        t.start()
+        self.thread = threading.Timer(time, self.kill_mxplayer)
+        self.thread.start()
+        return time
 
 
     def kill_mxplayer(self):
@@ -108,6 +110,7 @@ class Dasher:
                 subprocess.Popen(["killall", "-9", "mplayer"])
             else:
                 subprocess.Popen(["killall", "-9", "omxplayer.bin"])
+            self.thread.cancel()
         except:
             None
 
@@ -148,6 +151,28 @@ class Dasher:
     def download_youtube(self, url):
         print("download youtube")
         subprocess.Popen(["youtube-dl", "-f", "22,18", "-o", self.home + "/Downloads/%(id)s.%(ext)s", url])
+
+    def get_youtube_length(self, site):
+        url = site['url']
+        video = pafy.new(url)
+        try:
+            time = site['time']
+        except:
+            time = video.length
+        try:
+            start_at = self.get_sec(site['startat'])
+            start_at_str = site['startat']
+        except:
+            start_at = 0
+            start_at_str = "00:00:00"
+        if start_at > 0:
+            return time - start_at, start_at_str
+        else:
+            return time, start_at_str
+
+    def get_sec(self, time_str):
+        h, m, s = time_str.split(':')
+        return int(h) * 3600 + int(m) * 60 + int(s)
 
 #while True:
 #    pl = Dasher("mplayer", "/Users/jakobant")
