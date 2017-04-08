@@ -8,7 +8,7 @@ import re
 import subprocess
 import glob
 import urllib2
-import time
+import srvlookup
 import base64
 import pafy
 """
@@ -18,15 +18,17 @@ sitess = { "sites": [
 { "url": "http://www.cnn.com", "time": 20, "type": "chrome", "zoom": 1.5 }
 ] }"""
 class Dasher:
-    def __init__(self, player, home, play_url="https://elk.mikkari.net/roll/default.json"):
+    def __init__(self, player, home):
         self.player=player
         self.home=home
         self.chrome = Chromote()
         self.tab = self.chrome.tabs[0]
-        self.play_url=play_url
         self.one_player = None
         self.thread = None
-        self.play_url="https://elk.mikkari.net/roll/%s.json" % self.getMAC(self.getId())
+        self.play_url="{}/{}.json".format(self.get_srv_url(), self.getMAC(self.getId()))
+
+    def override_play_url(self, url="https://elk.mikkari.net/roll/default.json"):
+        self.play_url=url
 
     def getId(self):
         try:
@@ -99,8 +101,8 @@ class Dasher:
                 subprocess.Popen(["/usr/local/bin/mplayer", "-fs", file, "-ss", start])
             else:
                 subprocess.Popen(["omxplayer", "-o", "hdmi", "-b", file, "-l", start])
-        self.thread = threading.Timer(time, self.kill_mxplayer)
-        self.thread.start()
+        #self.thread = threading.Timer(time, self.kill_mxplayer)
+        #self.thread.start()
         return time
 
 
@@ -173,6 +175,17 @@ class Dasher:
     def get_sec(self, time_str):
         h, m, s = time_str.split(':')
         return int(h) * 3600 + int(m) * 60 + int(s)
+
+    def get_srv_url(self):
+        try:
+            srv = srvlookup('dasher')[0]
+            if srv.port == 443:
+                url = "https://{}/roll".format(srv.host)
+            else:
+                url = "http://{}:{}/roll".format(srv.host, srv.port)
+            return url
+        except:
+            return "https://elk.mikkari.net/roll"
 
 #while True:
 #    pl = Dasher("mplayer", "/Users/jakobant")

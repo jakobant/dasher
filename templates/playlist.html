@@ -1,0 +1,10 @@
+<html>
+  <head>
+    <title>Dasher micro server</title>
+  </head>
+  <body>
+{% for list in sites['sites'] %}
+    <div><p>type: {{ list['type'] }}  url: {{ list['url'] }} play time:<b>{{ list['time'] }}</b></p></div>
+{% endfor %}
+    </body>
+</html>

@@ -1,15 +1,18 @@
 #!flask/bin/python
 from flask import Flask, jsonify 
 from flask.ext.httpauth import HTTPBasicAuth
+from flask import render_template
 from flask import make_response
 from flask import request
-import time
+import os
 from dashserver import Dasher
 from time import sleep
 import json
 import threading
 
 auth = HTTPBasicAuth()
+api_key=os.getenv('D_API_KEY', 'admin')
+
 dasher = Dasher("mplayer", "/Users/jakobant")
 
 class Loop:
@@ -47,7 +50,10 @@ class Loop:
         self.ssize = self.ssize + 1
 
     def stop(self):
-        self.thread.cancel()
+        try:
+            self.thread.cancel()
+        except:
+            None
         if self.is_mxplayer:
             self.dasher.kill_mxplayer()
 
@@ -60,6 +66,8 @@ class Loop:
             site = self.get_next()
         if site['type'] in ['mxplayer', 'stream']:
             self.is_mxplayer = True
+        else:
+            self.is_mxplayer = False
         print(site)
         time = self.dasher.udisplay(site)
         self.thread = threading.Timer(time, self.start)
@@ -67,7 +75,7 @@ class Loop:
         return site
 
 looper = Loop(dasher)
-looper.start()
+#looper.start()
 
 app = Flask(__name__)
 
@@ -79,6 +87,8 @@ def not_found(error):
 def get_password(username):
     if username == 'admin':
         return 'pi'
+    elif username == api_key:
+        return 'pi'
     return None
 
 @auth.error_handler
@@ -87,9 +97,10 @@ def unauthorized():
 
 @app.route('/')
 def index():
-    return "Hello, World!"
+    return render_template("index.html",
+                           title='Home')
 
-@app.route('/clear')
+@app.route('/clear_playlist')
 @auth.login_required
 def clear():
     looper.clean_sites()
@@ -108,15 +119,30 @@ def get_index():
     print (site)
     return make_response(jsonify(site), 200)
 
-@app.route('/sites')
+@app.route('/playlist')
 @auth.login_required
 def get_sites():
     sites = looper.sites
-    return make_response(jsonify(sites), 200)
+    if request.args.get('json'):
+        return make_response(jsonify(sites), 200)
+    else:
+        return render_template("playlist.html",
+                           title='Home',
+                           sites=sites)
 
-@app.route('/playlist',  methods = ['POST'])
+@app.route('/add_to_playlist',  methods = ['POST', 'GET'])
 @auth.login_required
 def add_playlist():
+    if request.method == 'GET':
+        url = request.args.get('url')
+        time = request.args.get('time')
+        startat = request.args.get('startat')
+        type = request.args.get('type')
+        zoom = request.args.get('zoom')
+        json = { 'url': url, 'time': time, 'startat': startat, 'type': type, 'zoom': zoom }
+        print (json['url'])
+        looper.add_to_playlist(json)
+        return make_response(jsonify({'response': 'Success'}), 200)
     if request.headers['Content-Type'] != 'application/json':
         return make_response(jsonify({'error': 'set Content-Type: application/json'}), 403)
     data = request.json
@@ -135,6 +161,5 @@ def set_show():
     looper.start(data)
     return make_response(jsonify({'response': 'Success'}), 200)
 
-print ("debug")
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='5000')
