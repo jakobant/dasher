@@ -1,0 +1,24 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+  <form action="/add_to_playlist" method="get" name="add_to">
+      <p>
+          Type:
+          <select name="type">
+          <option value="chrome">chrome</option>
+          <option value="mxplayer">mxplayer</option>
+          <option value="stream">stream</option>
+          </select>
+          Time:
+          <input type="text" name="time" size="4" value="0">
+          Start At:
+          <input type="text" name="startat" size="9" value="00:00:00">
+          Zoom:
+          <input type="text" name="zoom" size="4" value="1">
+          Play url:
+        <input type="text" name="url" size="80">
+      </p>
+      <p><input type="submit" value="Add"></p>
+  </form>
+{% endblock %}

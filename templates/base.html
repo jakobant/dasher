@@ -1,0 +1,12 @@
+<html>
+  <head>
+    {% if title %}
+    <title>{{ title }} - Dasher</title>
+    {% else %}
+    <title>Welcome mini dasher</title>
+    {% endif %}
+  </head>
+  <body>
+    <div>Dasher: <a href="/">Home</a></div>
+    <hr>
+    {% block content %}{% endblock %}

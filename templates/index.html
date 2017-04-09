@@ -1,10 +1,8 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
 
+{% block content %}
 
-<html>
-  <head>
-    <title>Dasher micro server</title>
-  </head>
-  <body>
       <h1>SAPI</h1>
   <div><a href="/switch">Start / Switch</a></div>
   <div><a href="/stop">Stop</a></div>
@@ -13,5 +11,5 @@
       <div><a href="/playlist?json=true">Show Playlist json</a></div>
       <div><a href="/add_to_playlist">Add to Playlist</a></div>
   <div><a href="/playlist_view">Playlist View</a></div>
-  </body>
-</html>
+
+{% endblock %}

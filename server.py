@@ -100,6 +100,12 @@ def index():
     return render_template("index.html",
                            title='Home')
 
+@app.route('/playlist_view')
+def playlist_view():
+    return render_template("playlist_view.html",
+                           title='Play View')
+
+
 @app.route('/clear_playlist')
 @auth.login_required
 def clear():
