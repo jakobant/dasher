@@ -110,13 +110,13 @@ def playlist_view():
 @auth.login_required
 def clear():
     looper.clean_sites()
-    return make_response(jsonify({'success': 'cleanig sites'}), 200)
+    return make_response(jsonify({'result': 'clearing sites'}), 200)
 
 @app.route('/stop')
 @auth.login_required
 def stop():
     looper.stop()
-    return make_response(jsonify({'success': 'stopping thread'}), 200)
+    return make_response(jsonify({'result': 'stopping thread'}), 200)
 
 @app.route('/switch')
 @auth.login_required
@@ -129,17 +129,12 @@ def get_index():
 @auth.login_required
 def get_sites():
     sites = looper.sites
-    if request.args.get('json'):
-        return make_response(jsonify(sites), 200)
-    else:
-        return render_template("playlist.html",
-                           title='Home',
-                           sites=sites)
+    return make_response(jsonify(sites), 200)
 
 @app.route('/add_to_playlist',  methods = ['POST', 'GET'])
 @auth.login_required
 def add_playlist():
-    if request.method == 'GET':
+    if request.method == 'GET' and request.args.get('url')!=None:
         url = request.args.get('url')
         time = request.args.get('time')
         startat = request.args.get('startat')
@@ -148,13 +143,15 @@ def add_playlist():
         json = { 'url': url, 'time': time, 'startat': startat, 'type': type, 'zoom': zoom }
         print (json['url'])
         looper.add_to_playlist(json)
-        return make_response(jsonify({'response': 'Success'}), 200)
+        return make_response(jsonify({'result': 'Success'}), 200)
+    else:
+        return make_response(jsonify({'result': 'Error missing data'}), 200)
     if request.headers['Content-Type'] != 'application/json':
-        return make_response(jsonify({'error': 'set Content-Type: application/json'}), 403)
+        return make_response(jsonify({'result': 'Error set Content-Type: application/json'}), 403)
     data = request.json
     print (data['url'])
     looper.add_to_playlist(data)
-    return make_response(jsonify({'response': 'Success'}), 200)
+    return make_response(jsonify({'result': 'Success'}), 200)
 
 
 @app.route('/show',  methods = ['POST'])

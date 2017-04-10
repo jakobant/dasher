@@ -1,5 +1,87 @@
 <html>
   <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type=text/javascript>
+			$(function() {
+			  $('a#lnk-switch').bind('click', function() {
+				$.getJSON('/switch', {
+				  proglang: $('input[name="proglang"]').val(),
+				}, function(data) {
+				  $("#result").text(data.result);
+				});
+				return false;
+			  });
+			});
+		</script>
+    <script type=text/javascript>
+			$(function() {
+			  $('a#lnk-add_playlist').bind('click', function() {
+				$.getJSON('/add_to_playlist', {
+				  proglang: $('input[name="proglang"]').val(),
+				}, function(data) {
+				  $("#result").text(data.result);
+				});
+				return false;
+			  });
+			});
+		</script>
+    <script type=text/javascript>
+			$(function() {
+			  $('a#lnk-playlist').bind('click', function() {
+				$.getJSON('/playlist', {
+				  proglang: $('input[name="proglang"]').val(),
+				}, function(data) {
+				$('#turl').text('');
+				var eachrow = "<table><tr>"
+                 + "<td>URL</td>"
+                 + "<td>TYPE</td>"
+                 + "<td>TIME</td>"
+                 + "<td>ZOOM</td>"
+                 + "<td>STARTAT</td>"
+                 + "</tr>";
+                 $('#turl').append(eachrow);
+				$.each(data.sites, function(i, item) {
+				var eachrow = "<tr>"
+                 + "<td>" + item.url + "</td>"
+                 + "<td>" + item.type + "</td>"
+                 + "<td>" + item.time + "</td>"
+                 + "<td>" + item.zoom + "</td>"
+                 + "<td>" + item.startat + "</td>"
+                 + "</tr>";
+                 $('#turl').append(eachrow);
+
+
+				  });
+				  $('#turl').append('</table>');
+				});
+				return false;
+			  });
+			});
+		</script>
+    <script type=text/javascript>
+			$(function() {
+			  $('a#lnk-clear').bind('click', function() {
+				$.getJSON('/clear_playlist', {
+				  proglang: $('input[name="proglang"]').val(),
+				}, function(data) {
+				  $("#result").text(data.result);
+				});
+				return false;
+			  });
+			});
+		</script>
+    <script type=text/javascript>
+			$(function() {
+			  $('a#lnk-stop').bind('click', function() {
+				$.getJSON('/stop', {
+				  proglang: $('input[name="proglang"]').val(),
+				}, function(data) {
+				  $("#result").text(data.result);
+				});
+				return false;
+			  });
+			});
+		</script>
     {% if title %}
     <title>{{ title }} - Dasher</title>
     {% else %}
