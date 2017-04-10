@@ -2,7 +2,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <form action="/add_to_playlist" method="get" name="add_to">
+
+      <h1>SAPI</h1>
+  <div><a id=lnk-switch  href="/switch">Start / Switch</a></div>
+  <div><a id=lnk-stop    href="/stop">Stop</a></div>
+  <div><a id=lnk-clear    href="/clear_playlist">Clear Playlist</a></div>
+  <div><a id=lnk-playlist href="/playlist">Show Playlist json</a></div>
+  <div><a id=lnk-add_playlist href="/add_to_playlist">Add to Playlist</a></div>
+  <div><a href="/playlist_view">Playlist View</a></div>
+
+<form  method="get" name="add_to">
       <p>
           Type:
           <select name="type">
@@ -11,7 +20,7 @@
           <option value="stream">stream</option>
           </select>
           Time:
-          <input type="text" name="time" size="4" value="0">
+          <input type="text" name="time" size="4" value="90">
           Start At:
           <input type="text" name="startat" size="9" value="00:00:00">
           Zoom:
@@ -19,6 +28,11 @@
           Play url:
         <input type="text" name="url" size="80">
       </p>
-      <p><input type="submit" value="Add"></p>
+      <a href=# id=lnk-add_playlist><button class='btn btn-default'>Submit</button></a>
   </form>
+
+
+<div><p id=result> </p></div>
+<div><p id=turl> </p></div>
+
 {% endblock %}

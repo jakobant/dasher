@@ -5,7 +5,6 @@
 			$(function() {
 			  $('a#lnk-switch').bind('click', function() {
 				$.getJSON('/switch', {
-				  proglang: $('input[name="proglang"]').val(),
 				}, function(data) {
 				  $("#result").text(data.result);
 				});
@@ -17,7 +16,22 @@
 			$(function() {
 			  $('a#lnk-add_playlist').bind('click', function() {
 				$.getJSON('/add_to_playlist', {
-				  proglang: $('input[name="proglang"]').val(),
+				  url: $('input[name="url"]').val(),
+				  type: $('select[name="type"]').val(),
+				  time: $('input[name="time"]').val(),
+				  zoom: $('input[name="zoom"]').val(),
+				  startat: $('input[name="startat"]').val(),
+				}, function(data) {
+				  $("#result").text(data.result);
+				});
+				return false;
+			  });
+			});
+		</script>
+    <script type=text/javascript>
+			$(function() {
+			  $('input#lnk-add_playlist').bind('click', function() {
+				$.getJSON('/add_to_playlist', {
 				}, function(data) {
 				  $("#result").text(data.result);
 				});
@@ -33,26 +47,23 @@
 				}, function(data) {
 				$('#turl').text('');
 				var eachrow = "<table><tr>"
-                 + "<td>URL</td>"
+                 + "<td>STARTAT</td>"
                  + "<td>TYPE</td>"
                  + "<td>TIME</td>"
                  + "<td>ZOOM</td>"
-                 + "<td>STARTAT</td>"
+                 + "<td>URL</td>"
                  + "</tr>";
-                 $('#turl').append(eachrow);
 				$.each(data.sites, function(i, item) {
-				var eachrow = "<tr>"
-                 + "<td>" + item.url + "</td>"
+				eachrow = eachrow + "<tr>"
+                 + "<td>" + item.startat + "</td>"
                  + "<td>" + item.type + "</td>"
                  + "<td>" + item.time + "</td>"
                  + "<td>" + item.zoom + "</td>"
-                 + "<td>" + item.startat + "</td>"
+                 + "<td>" + item.url + "</td>"
                  + "</tr>";
-                 $('#turl').append(eachrow);
-
-
 				  });
-				  $('#turl').append('</table>');
+				  eachrow = eachrow + "</table>";
+				  $('#turl').append(eachrow);
 				});
 				return false;
 			  });
@@ -62,7 +73,6 @@
 			$(function() {
 			  $('a#lnk-clear').bind('click', function() {
 				$.getJSON('/clear_playlist', {
-				  proglang: $('input[name="proglang"]').val(),
 				}, function(data) {
 				  $("#result").text(data.result);
 				});
@@ -74,7 +84,6 @@
 			$(function() {
 			  $('a#lnk-stop').bind('click', function() {
 				$.getJSON('/stop', {
-				  proglang: $('input[name="proglang"]').val(),
 				}, function(data) {
 				  $("#result").text(data.result);
 				});

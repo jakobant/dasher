@@ -26,8 +26,10 @@ class Loop:
 
     def get_next(self):
         x = self.current
+        if self.ssize == 0:
+            self.sites = self.dasher.get_json()
         site = self.sites['sites'][x]
-        if self.current == self.ssize-1:
+        if self.current == self.ssize-1 or self.ssize == 0:
             self.sites = self.dasher.get_json()
             self.ssize = len(self.sites['sites'])
             self.current = 0

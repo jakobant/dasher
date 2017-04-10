@@ -158,8 +158,10 @@ class Dasher:
         url = site['url']
         video = pafy.new(url)
         try:
-            time = site['time']
+            time = int(site['time'])
         except:
+            time = video.length
+        if time == 0:
             time = video.length
         try:
             start_at = self.get_sec(site['startat'])
@@ -168,7 +170,7 @@ class Dasher:
             start_at = 0
             start_at_str = "00:00:00"
         if start_at > 0:
-            return time - start_at, start_at_str
+            return time, start_at_str
         else:
             return time, start_at_str
 
