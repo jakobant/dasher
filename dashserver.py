@@ -131,8 +131,14 @@ class Dasher:
         return "none"
 
     def get_id(self, url):
-        if re.search("youtube", url):
+        if re.search("youtube|youtu.be", url):
+            #youtube.com/watch?v=asdfasdf
             ma = re.compile(".*=(.*)$")
+            match = ma.match(url)
+            if match:
+                return match.groups()[0]
+            #youtu.be/adsfdsff
+            ma = re.compile(".*/(.*)$")
             match = ma.match(url)
             if match:
                 return match.groups()[0]
@@ -143,7 +149,7 @@ class Dasher:
                 return match.groups()[0]
 
     def videodl(self, site):
-        if re.search("youtube", site['url']):
+        if re.search("youtube", site['url']) or re.search("youtu.be", site['url']):
             self.download_youtube(site['url'])
         elif re.search("facebook", site['url']):
             self.download_facebook(site['url'])
@@ -182,7 +188,8 @@ class Dasher:
 
     def get_srv_url(self):
         try:
-            srv = srvlookup('dasher')[0]
+            domain = os.getenv('DOMAIN', 'mikkari.net')
+            srv = srvlookup('dasher', domain=domain)[0]
             if srv.port == 443:
                 url = "https://{}/roll".format(srv.host)
             else:
