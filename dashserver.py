@@ -10,25 +10,30 @@ import glob
 import urllib2
 import srvlookup
 import base64
+import os
 import pafy
+
 """
 sitess = { "sites": [
 { "url": "http://www.mbl.is", "time": 12, "type": "chrome", "zoom": 1.3 },
 { "url": "https://www.youtube.com/watch?v=qRfnQn0g5-Q", "time": 20, "type": "mxplayer", "zoom": 1, "startat": "00:06:00" },
 { "url": "http://www.cnn.com", "time": 20, "type": "chrome", "zoom": 1.5 }
 ] }"""
+
+
 class Dasher:
     def __init__(self, player, home):
-        self.player=player
-        self.home=home
+        self.player = player
+        self.home = home
         self.chrome = Chromote()
         self.tab = self.chrome.tabs[0]
         self.one_player = None
         self.thread = None
-        self.play_url="{}/{}.json".format(self.get_srv_url(), self.getMAC(self.getId()))
+        self.myid = os.getenv('MYID', self.getMAC(self.getId()))
+        self.play_url = "{}/{}.json".format(self.get_srv_url(), self.myid)
 
     def override_play_url(self, url="https://elk.mikkari.net/roll/default.json"):
-        self.play_url=url
+        self.play_url = url
 
     def getId(self):
         try:
@@ -39,16 +44,15 @@ class Dasher:
                         continue
             return fields[0]
         except:
-            #gguessin mac
+            # gguessin mac
             return "en0"
-
 
     def getMAC(self, interface='eth0'):
         try:
-            line = open('/sys/class/net/%s/address' %interface).read()
+            line = open('/sys/class/net/%s/address' % interface).read()
         except:
             line = "000000000000"
-        return base64.b64encode(line[0:17].replace(":",""))
+        return base64.b64encode(line[0:17].replace(":", ""))
 
     def get_json(self):
         try:
@@ -56,14 +60,14 @@ class Dasher:
             opener = urllib2.build_opener()
             fq = opener.open(req)
             sites = json.loads(fq.read())
-            f = open(self.home+"/.dash_cache", "w")
+            f = open(self.home + "/.dash_cache", "w")
             f.write(json.dumps(sites))
             f.close()
         except Exception as e:
             print(e)
             print("Read from cache")
-            f =open(self.home+"/.dash_cache", "r")
-            sites=json.loads(f.read())
+            f = open(self.home + "/.dash_cache", "r")
+            sites = json.loads(f.read())
             f.close()
         return sites
 
@@ -92,19 +96,18 @@ class Dasher:
             print(start)
             print(self.get_id(site['url']))
             file = self.get_download_file(self.get_id(site['url']))
-            if file=="none":
+            if file == "none":
                 self.videodl(site)
                 sleep(10)
             file = self.get_download_file(self.get_id(site['url']))
             print(file)
-            if self.player=="mplayer":
+            if self.player == "mplayer":
                 subprocess.Popen(["/usr/local/bin/mplayer", "-fs", file, "-ss", start])
             else:
                 subprocess.Popen(["omxplayer", "-o", "hdmi", "-b", file, "-l", start])
-        #self.thread = threading.Timer(time, self.kill_mxplayer)
-        #self.thread.start()
+        # self.thread = threading.Timer(time, self.kill_mxplayer)
+        # self.thread.start()
         return time
-
 
     def kill_mxplayer(self):
         try:
@@ -117,9 +120,9 @@ class Dasher:
             None
 
     def get_download_file(self, id_file):
-        file = glob.glob(self.home+"/Downloads/%s.mp4" % id_file)
-        #print (file)
-        #print (self.home+"/Downloads/%s.mp4" % id_file)
+        file = glob.glob(self.home + "/Downloads/%s.mp4" % id_file)
+        # print (file)
+        # print (self.home+"/Downloads/%s.mp4" % id_file)
         if len(file) > 0:
             return file[0]
         file = glob.glob(self.home + "/Downloads/%s*part*" % id_file)
@@ -148,7 +151,6 @@ class Dasher:
     def download_facebook(self, url):
         print("download facebook")
         subprocess.Popen(["youtube-dl", "-o", self.home + "/Downloads/%(id)s.%(ext)s", url])
-
 
     def download_youtube(self, url):
         print("download youtube")
@@ -189,10 +191,10 @@ class Dasher:
         except:
             return "https://elk.mikkari.net/roll"
 
-#while True:
-#    pl = Dasher("mplayer", "/Users/jakobant")
-#    sites = pl.get_json()
-#    for site in sites['sites']:
-#        pl.udisplay(site)
-#        sleep(10)
-        #sleep(int(site['time']))
+            # while True:
+        #    pl = Dasher("mplayer", "/Users/jakobant")
+        #    sites = pl.get_json()
+        #    for site in sites['sites']:
+        #        pl.udisplay(site)
+        #        sleep(10)
+        # sleep(int(site['time']))

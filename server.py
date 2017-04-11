@@ -1,5 +1,5 @@
 #!flask/bin/python
-from flask import Flask, jsonify 
+from flask import Flask, jsonify
 from flask.ext.httpauth import HTTPBasicAuth
 from flask import render_template
 from flask import make_response
@@ -11,14 +11,18 @@ import json
 import threading
 
 auth = HTTPBasicAuth()
-api_key=os.getenv('D_API_KEY', 'admin')
+api_key = os.getenv('D_API_KEY', 'admin')
+dasher_home = os.getenv('HOME', '/home/pi')
+dasher_player = os.getenv('MPLAYER', 'mxplayer')
 
-dasher = Dasher("mplayer", "/Users/jakobant")
+dasher = Dasher(dasher_player, dasher_home)
+
 
 class Loop:
     def __init__(self, dasher):
         self.dasher = dasher
         self.sites = self.dasher.get_json()
+        self.sites['myid'] = self.dasher.myid
         self.ssize = len(self.sites['sites'])
         self.current = 0
         self.thread = None
@@ -29,7 +33,7 @@ class Loop:
         if self.ssize == 0:
             self.sites = self.dasher.get_json()
         site = self.sites['sites'][x]
-        if self.current == self.ssize-1 or self.ssize == 0:
+        if self.current == self.ssize - 1 or self.ssize == 0:
             self.sites = self.dasher.get_json()
             self.ssize = len(self.sites['sites'])
             self.current = 0
@@ -43,7 +47,7 @@ class Loop:
         self.start()
 
     def clean_sites(self):
-        self.sites = { "sites": [] }
+        self.sites = {"sites": []}
         self.current = 0
         self.ssize = 0
 
@@ -76,31 +80,35 @@ class Loop:
         self.thread.start()
         return site
 
+
 looper = Loop(dasher)
-#looper.start()
+looper.start()
 
 app = Flask(__name__)
+
 
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
+
 @auth.get_password
 def get_password(username):
-    if username == 'admin':
-        return 'pi'
-    elif username == api_key:
+    if username == api_key:
         return 'pi'
     return None
+
 
 @auth.error_handler
 def unauthorized():
     return make_response(jsonify({'error': 'Unauthorized access'}), 401)
 
+
 @app.route('/')
 def index():
     return render_template("index.html",
                            title='Home')
+
 
 @app.route('/playlist_view')
 def playlist_view():
@@ -114,11 +122,13 @@ def clear():
     looper.clean_sites()
     return make_response(jsonify({'result': 'clearing sites'}), 200)
 
+
 @app.route('/stop')
 @auth.login_required
 def stop():
     looper.stop()
     return make_response(jsonify({'result': 'stopping thread'}), 200)
+
 
 @app.route('/switch')
 @auth.login_required
@@ -127,22 +137,24 @@ def get_index():
     print (site)
     return make_response(jsonify(site), 200)
 
+
 @app.route('/playlist')
 @auth.login_required
 def get_sites():
     sites = looper.sites
     return make_response(jsonify(sites), 200)
 
-@app.route('/add_to_playlist',  methods = ['POST', 'GET'])
+
+@app.route('/add_to_playlist', methods=['POST', 'GET'])
 @auth.login_required
 def add_playlist():
-    if request.method == 'GET' and request.args.get('url')!=None:
+    if request.method == 'GET' and request.args.get('url') != None:
         url = request.args.get('url')
         time = request.args.get('time')
         startat = request.args.get('startat')
         type = request.args.get('type')
         zoom = request.args.get('zoom')
-        json = { 'url': url, 'time': time, 'startat': startat, 'type': type, 'zoom': zoom }
+        json = {'url': url, 'time': time, 'startat': startat, 'type': type, 'zoom': zoom}
         print (json['url'])
         looper.add_to_playlist(json)
         return make_response(jsonify({'result': 'Success'}), 200)
@@ -156,7 +168,7 @@ def add_playlist():
     return make_response(jsonify({'result': 'Success'}), 200)
 
 
-@app.route('/show',  methods = ['POST'])
+@app.route('/show', methods=['POST'])
 @auth.login_required
 def set_show():
     if request.headers['Content-Type'] != 'application/json':
@@ -165,6 +177,7 @@ def set_show():
     print (data['url'])
     looper.start(data)
     return make_response(jsonify({'response': 'Success'}), 200)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='5000')
