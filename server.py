@@ -1,6 +1,7 @@
 #!flask/bin/python
 from flask import Flask, jsonify
-from flask.ext.httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPBasicAuth
+#from flask.ext.httpauth import HTTPBasicAuth
 from flask import render_template
 from flask import make_response
 from flask import request
@@ -78,6 +79,8 @@ class Loop:
         time = self.dasher.udisplay(site)
         self.thread = threading.Timer(time, self.start)
         self.thread.start()
+        if site['screenshot'] == 'true':
+            self.dasher.get_screenshot(site['delay'], site['prefix'] )
         return site
 
 

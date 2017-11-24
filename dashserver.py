@@ -86,7 +86,7 @@ class Dasher:
     def mxplayer(self, site):
         if site['type'] == "stream":
             if self.player == "mplayer":
-                subprocess.Popen(["/usr/local/bin/mplayer", "-cache", "128", "-fs", site['url']])
+                subprocess.Popen(["mplayer", "-cache", "128", "-fs", site['url']])
             else:
                 subprocess.Popen(["omxplayer", "-o", "hdmi", "-b", site['url']])
             time = int(site['time'])
@@ -102,7 +102,7 @@ class Dasher:
             file = self.get_download_file(self.get_id(site['url']))
             print(file)
             if self.player == "mplayer":
-                subprocess.Popen(["/usr/local/bin/mplayer", "-fs", file, "-ss", start])
+                subprocess.Popen(["mplayer", "-fs", file, "-ss", start])
             else:
                 subprocess.Popen(["omxplayer", "-o", "hdmi", "-b", file, "-l", start])
         # self.thread = threading.Timer(time, self.kill_mxplayer)
@@ -157,6 +157,11 @@ class Dasher:
     def download_facebook(self, url):
         print("download facebook")
         subprocess.Popen(["youtube-dl", "-o", self.home + "/Downloads/%(id)s.%(ext)s", url])
+
+    def get_screenshot(self, delay, prefix):
+        print("Get screenshot delay:{} prefix:{}").format(delay, prefix)
+        p = subprocess.Popen(["./utils/screenshot.sh", delay, prefix])
+        print(p.communicate())
 
     def download_youtube(self, url):
         print("download youtube")
