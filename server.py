@@ -157,7 +157,10 @@ def add_playlist():
         startat = request.args.get('startat')
         type = request.args.get('type')
         zoom = request.args.get('zoom')
-        json = {'url': url, 'time': time, 'startat': startat, 'type': type, 'zoom': zoom}
+        screenshot = request.args.get('screenshot')
+        delay = request.args.get('delay')
+        prefix = request.args.get('prefix')
+        json = {'url': url, 'time': time, 'startat': startat, 'type': type, 'zoom': zoom, 'screenshot': screenshot, 'delay': delay, 'prefix': prefix}
         print (json['url'])
         looper.add_to_playlist(json)
         return make_response(jsonify({'result': 'Success'}), 200)

@@ -21,6 +21,9 @@
 				  type: $('select[name="type"]').val(),
 				  time: $('input[name="time"]').val(),
 				  zoom: $('input[name="zoom"]').val(),
+				  screenshot: $('select[name="screenshot"]').val(),
+				  delay: $('input[name="delay"]').val(),
+				  prefix: $('input[name="prefix"]').val(),
 				  startat: $('input[name="startat"]').val(),
 				}, function(data) {
 				  $("#result").text(data.result);
@@ -52,6 +55,9 @@
                  + "<th>Start at</th>"
                  + "<th>Play time</th>"
                  + "<th>Zoom</th>"
+                 + "<th>Screenshot</th>"
+                 + "<th>Delay</th>"
+                 + "<th>Prefix</th>"
                  + "<th>Url</th>"
                  + "</tr>";
 				$.each(data.sites, function(i, item) {
@@ -60,6 +66,9 @@
                  + "<td>" + item.startat + "</td>"
                  + "<td>" + item.time + "</td>"
                  + "<td>" + item.zoom + "</td>"
+                 + "<td>" + item.screenshot + "</td>"
+                 + "<td>" + item.delay + "</td>"
+                 + "<td>" + item.prefix + "</td>"
                  + "<td>" + item.url + "</td>"
                  + "</tr>";
 				  });
