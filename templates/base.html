@@ -47,17 +47,17 @@
 				  proglang: $('input[name="proglang"]').val(),
 				}, function(data) {
 				$('#turl').text('');
-				var eachrow = "<table><tr>"
-                 + "<td>STARTAT</td>"
-                 + "<td>TYPE</td>"
-                 + "<td>TIME</td>"
-                 + "<td>ZOOM</td>"
-                 + "<td>URL</td>"
+				var eachrow = "<table class='table table-striped table-bordered' cellspacing='0' width='100%'><tr>"
+                 + "<th>Type</th>"
+                 + "<th>Start at</th>"
+                 + "<th>Play time</th>"
+                 + "<th>Zoom</th>"
+                 + "<th>Url</th>"
                  + "</tr>";
 				$.each(data.sites, function(i, item) {
 				eachrow = eachrow + "<tr>"
-                 + "<td>" + item.startat + "</td>"
                  + "<td>" + item.type + "</td>"
+                 + "<td>" + item.startat + "</td>"
                  + "<td>" + item.time + "</td>"
                  + "<td>" + item.zoom + "</td>"
                  + "<td>" + item.url + "</td>"
