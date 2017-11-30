@@ -9,7 +9,7 @@ import os
 from dashserver import Dasher
 from time import sleep
 import json
-import threading
+import threading, os, glob
 
 auth = HTTPBasicAuth()
 api_key = os.getenv('D_API_KEY', 'admin')
@@ -119,8 +119,11 @@ def unauthorized():
 
 @app.route('/')
 def index():
+    subdir, dirs, files = os.walk('./screenshots/')
+    screenshots={'list': subdir[1]}
+    timelaps = {'list': subdir[1]}
     return render_template("index.html",
-                           title='Home')
+                           title='Home', screenshots=screenshots, timelaps=timelaps)
 
 
 @app.route('/playlist_view')
@@ -195,13 +198,36 @@ def set_show():
     return make_response(jsonify({'response': 'Success'}), 200)
 
 
+@app.route('/screenshots', methods=['GET'])
+def get_screenshots():
+    if request.method == 'GET' and request.args.get('path') != None:
+        path = request.args.get('path')
+        files = glob.glob('./screenshots/'+path+'/*png')
+        files.sort(key=os.path.getmtime)
+        print({'results': files})
+        return render_template("screenshots.html",
+                               title='Screenshots', list={'results': files} )
+
+@app.route('/timelaps')
+def get_timelaps():
+    if request.method == 'GET' and request.args.get('path') != None:
+        path = request.args.get('path')
+        files = glob.glob('./screenshots/'+path+'/*mp4')
+        files.sort(key=os.path.getmtime)
+        print({'results': files})
+        return render_template("screenshots.html",
+                               title='Timelaps', list={'results': files} )
+
+
+
 @app.route('/media/<path:path>')
 def get_resource(path):  # pragma: no cover
     mimetypes = {
         ".css": "text/css",
         ".html": "text/html",
         ".js": "application/javascript",
-    }
+        ".png": "image/png",
+        ".mp4": "video/mp4"    }
     complete_path = os.path.join(root_dir(), path)
     ext = os.path.splitext(path)[1]
     mimetype = mimetypes.get(ext, "text/html")

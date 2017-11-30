@@ -8,6 +8,12 @@
   <div><a id=lnk-stop    href="/stop">Stop</a></div>
   <div><a id=lnk-clear    href="/clear_playlist">Clear Playlist</a></div>
   <div><a id=lnk-playlist href="/playlist">Show Playlist json</a></div>
+{% for list in screenshots['list'] %}
+  <div><a href="/screenshots?path={{ list }}">Show Screenshots {{ list }}</a></div>
+{% endfor %}
+{% for list in timelaps['list'] %}
+  <div><a href="/timelaps?path={{ list }}">Show Timelaps video {{ list }}</a></div>
+{% endfor %}
   <!--<div><a id=lnk-add_playlist href="/add_to_playlist">Add to Playlist</a></div>-->
   <div><a href="/playlist_view">Playlist View</a></div>
 

@@ -79,6 +79,29 @@
 			  });
 			});
 		</script>
+
+          <script type=text/javascript>
+			$(function() {
+			  $('a#lnk-screenshots').bind('click', function() {
+				$.getJSON('/screenshots?path='+data, {
+				  pathx: $('input[name="pathx"]').val(),
+				}, function(data) {
+				$('#turl').text('');
+				var eachrow = "<table class='table table-striped table-bordered' cellspacing='0' width='100%'><tr>"
+                 + "<th>Type</th>"
+                 + "</tr>";
+				$.each(data.results, function(i, item) {
+				eachrow = eachrow + "<tr>"
+                 + "<td>" + item + "</td>"
+                 + "</tr>";
+				  });
+				  eachrow = eachrow + "</table>";
+				  $('#turl').append(eachrow);
+				});
+				return false;
+			  });
+			});
+		</script>
     <script type=text/javascript>
 			$(function() {
 			  $('a#lnk-clear').bind('click', function() {
