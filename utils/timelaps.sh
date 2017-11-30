@@ -35,6 +35,6 @@ if [ -f /etc/fedora-release ]; then
 elif [ -f /etc/redat-release ]; then
 	ffmpeg -y -i ${DD}_${BASEPATH}_timelaps.avi -c:v libx264 -preset slow -crf 15 ${DD}_${BASEPATH}_timelaps_final.mp4
 else
-	avconv -y -r 5 -i ${DD}_${BASEPATH}_timelaps.avi -r 5 -vcodec libx264 -q:v 20 -vf scale=1280:720 ${DD}_${BASEPATH}_timelaps_final.mp4
+	avconv -y -r 10 -i ${DD}_${BASEPATH}_timelaps.avi -r 10 -vcodec libx264 -pix_fmt yuv420p -q:v 20 -vf scale=1280:720 ${DD}_${BASEPATH}_timelaps_final.mp4
 fi
 rm -f ${DD}_${BASEPATH}_timelaps.avi
