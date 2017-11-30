@@ -12,7 +12,7 @@ source ./venv/bin/activate
 ./venv/bin/pip install -r requirements.txt
 cd ..
 
-cd pywify
+cd piwify
 virtualenv venv
 source ./venv/bin/activate
 ./venv/bin/pip install -r requirements.txt
@@ -24,7 +24,7 @@ cat <<EOF>/home/pi/.config/lxsession/LXDE-pi/autostart
 @xset s noblank
 @xset s off
 @xset -dpms
-@chromium-browser --kiosk --disable-session-crashed-bubble --remote-debugging-port=9222
+@/home/pi/dasher/chrome.sh
 @/home/pi/dasher/start.sh
 EOF
 
@@ -39,3 +39,12 @@ sleep 30
 done
 EOF
 
+cat <<EOF>/home/pi/dasher/chrome.sh
+#!/bin/bash
+sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' ~/.config/chromium/'Local State'
+sed -i 's/"exited_cleanly":false/"exited_cleanly":true/; s/"exit_type":"[^"]\+"/"exit_type":"Normal"/' ~/.config/chromium/Default/Preferences
+chromium-browser --kiosk --remote-debugging-port=9222 --no-default-browser-check --no-first-run --disable-infobars --disable-session-crashed-bubble
+EOF
+
+
+chmod 755 /home/pi/dasher/*.sh
