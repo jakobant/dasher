@@ -26,7 +26,7 @@ find $FULLPATH -type f -size -270k -name '$DD*.png' -exec rm {} \;
 cd $FULLPATH
 ls $DD*.png| awk 'BEGIN{ a=0 }{ printf "cp %s timelaps%04d.png\n", $0, a++ }'| bash
 
-ffmpeg -r 5 -pattern_type glob -i '*.png' -i timelaps%04d.png -c:v copy ${DD}_${BASEPATH}_timelaps.avi
+ffmpeg -y -r 5 -pattern_type glob -i '*.png' -i timelaps%04d.png -c:v copy ${DD}_${BASEPATH}_timelaps.avi
 
 rm -f timelaps*png
 
