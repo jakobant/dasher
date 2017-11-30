@@ -3,6 +3,7 @@
 if [ "$#" -le 1 ]; then
     echo "Illegal number of parameters"
     echo "Usage $0 path <date, ie 2017-11-26>"
+    exit 1
 fi
 
 BASEPATH=$1
