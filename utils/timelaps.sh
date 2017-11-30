@@ -1,6 +1,8 @@
 #!/bin/bash
 
-if [ "$#" -le 1 ]; then
+echo $#
+
+if [ "$#" -le 0 ]; then
     echo "Illegal number of parameters"
     echo "Usage $0 path <date, ie 2017-11-26>"
     exit 1
