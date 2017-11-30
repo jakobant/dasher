@@ -10,15 +10,15 @@ if [ -f /etc/fedora-release ]
 then
 	gnome-screenshot -f ${DD}.png
 	mogrify -font Liberation-Sans -fill yellow -undercolor "#00000080" -pointsize 26 -annotate +30+30 "`date`" ${DD}.png
-	mv ${DD}_fedora.png $HOME/screenshots/$PRE
+	mv ${DD}.png $HOME/screenshots/$PRE
 elif [ -f /etc/redat-release ]
 then
 	gnome-screenshot -f ${DD}.png
 	mogrify -font Liberation-Sans -fill yellow -undercolor "#00000080" -pointsize 26 -annotate +30+30 "`date`" ${DD}.png
-	mv ${DD}_redhat.png $HOME/screenshots/$PRE
+	mv ${DD}.png $HOME/screenshots/$PRE
 else
 	scrot ${DD}.png
 	mogrify -font Liberation-Sans -fill yellow -undercolor "#00000080" -pointsize 26 -annotate +30+30 "`date`" ${DD}.png
-	mv ${DD}_fedora.png $HOME/screenshots/$PRE
+	mv ${DD}.png $HOME/screenshots/$PRE
 fi
 
