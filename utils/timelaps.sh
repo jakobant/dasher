@@ -29,6 +29,7 @@ ls $DD*.png| awk 'BEGIN{ a=0 }{ printf "cp %s timelaps%04d.png\n", $0, a++ }'| b
 
 #avconv -y -r 5 -i timelaps%04d.png -r 5 -vcodec libx264 -q:v 20 -vf scale=1280:720 elk_timelaps_2811.mp4
 
-ffmpeg -r 5 -pattern_type glob -i '*.png' -i timelaps%04d.png -s hd1080 -vcodec libx264 ${DD}_${BASEPATH}_timelaps.mp4
+ffmpeg -r 5 -pattern_type glob -i '*.png' -i timelaps%04d.png -c:v copy ${DD}_${BASEPATH}_timelaps.mp4
+ffmpeg -i ${DD}_${BASEPATH}_timelaps.mp4 -c:v libx264 -preset slow -crf 15 ${DD}_${BASEPATH}_timelaps_final.mp4
 
 rm -f timelaps*png
