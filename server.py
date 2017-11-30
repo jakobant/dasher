@@ -92,6 +92,11 @@ app = Flask(__name__)
 def root_dir():  # pragma: no cover
     return os.path.abspath(os.path.dirname(__file__))
 
+def get_folders(path):
+    folders = []
+    for list in glob.glob(path):
+        folders.append(os.path.basename(list))
+    return folders
 
 def get_file(filename):  # pragma: no cover
     try:
@@ -119,11 +124,9 @@ def unauthorized():
 
 @app.route('/')
 def index():
-    subdir, dirs, files = os.walk('./screenshots/')
-    screenshots={'list': subdir[1]}
-    timelaps = {'list': subdir[1]}
+    folders = {'results': get_folders('./screenshots/*')}
     return render_template("index.html",
-                           title='Home', screenshots=screenshots, timelaps=timelaps)
+                           title='Home', screenshots=folders, timelaps=folders)
 
 
 @app.route('/playlist_view')
