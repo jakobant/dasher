@@ -123,6 +123,7 @@ def unauthorized():
 
 
 @app.route('/')
+@auth.login_required
 def index():
     folders = {'list': get_folders('./screenshots/*')}
     return render_template("index.html",
@@ -202,6 +203,7 @@ def set_show():
 
 
 @app.route('/screenshots', methods=['GET'])
+@auth.login_required
 def get_screenshots():
     if request.method == 'GET' and request.args.get('path') != None:
         path = request.args.get('path')
@@ -212,6 +214,7 @@ def get_screenshots():
                                title='Screenshots', list={'results': files} )
 
 @app.route('/timelaps')
+@auth.login_required
 def get_timelaps():
     if request.method == 'GET' and request.args.get('path') != None:
         path = request.args.get('path')
@@ -224,6 +227,7 @@ def get_timelaps():
 
 
 @app.route('/media/<path:path>')
+@auth.login_required
 def get_resource(path):  # pragma: no cover
     mimetypes = {
         ".css": "text/css",
