@@ -26,10 +26,14 @@ find $FULLPATH -type f -size -270k -name '$DD*.png' -exec rm {} \;
 cd $FULLPATH
 ls $DD*.png| awk 'BEGIN{ a=0 }{ printf "cp %s timelaps%04d.png\n", $0, a++ }'| bash
 
-
-#avconv -y -r 5 -i timelaps%04d.png -r 5 -vcodec libx264 -q:v 20 -vf scale=1280:720 elk_timelaps_2811.mp4
-
-ffmpeg -r 5 -pattern_type glob -i '*.png' -i timelaps%04d.png -c:v copy ${DD}_${BASEPATH}_timelaps.mp4
-ffmpeg -i ${DD}_${BASEPATH}_timelaps.mp4 -c:v libx264 -preset slow -crf 15 ${DD}_${BASEPATH}_timelaps_final.mp4
+ffmpeg -r 5 -pattern_type glob -i '*.png' -i timelaps%04d.png -c:v copy ${DD}_${BASEPATH}_timelaps.avi
 
 rm -f timelaps*png
+
+if [ -f /etc/fedora-release ]; then
+	ffmpeg -y -i ${DD}_${BASEPATH}_timelaps.avi -c:v libx264 -preset slow -crf 15 ${DD}_${BASEPATH}_timelaps_final.mp4
+elif [ -f /etc/redat-release ]; then
+	ffmpeg -y -i ${DD}_${BASEPATH}_timelaps.avi -c:v libx264 -preset slow -crf 15 ${DD}_${BASEPATH}_timelaps_final.mp4
+else
+	avconv -y -r 5 -i ${DD}_${BASEPATH}_timelaps.avi -r 5 -vcodec libx264 -q:v 20 -vf scale=1280:720 {DD}_${BASEPATH}_timelaps_final.mp4
+fi
