@@ -124,7 +124,7 @@ def unauthorized():
 
 @app.route('/')
 def index():
-    folders = {'results': get_folders('./screenshots/*')}
+    folders = {'list': get_folders('./screenshots/*')}
     return render_template("index.html",
                            title='Home', screenshots=folders, timelaps=folders)
 
