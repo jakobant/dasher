@@ -3,13 +3,11 @@
 from time import sleep
 from chromote import Chromote
 import json
-import threading
 import re
 import subprocess
 import glob
 import urllib2
 import srvlookup
-import base64
 import os
 import pafy
 
@@ -31,6 +29,8 @@ class Dasher:
         self.thread = None
         self.myid = os.getenv('MYID', self.getMAC(self.getId()))
         self.play_url = "{}/{}.json".format(self.get_srv_url(), self.myid)
+        if self.myid=="demo":
+            self.override_play_url("https://raw.githubusercontent.com/jakobant/dasher/master/demo.json")
 
     def override_play_url(self, url="https://elk.mikkari.net/roll/default.json"):
         self.play_url = url
@@ -52,7 +52,7 @@ class Dasher:
             line = open('/sys/class/net/%s/address' % interface).read()
         except:
             line = "000000000000"
-        return base64.b64encode(line[0:17].replace(":", ""))
+        return line[0:17].replace(":", "").strip()
 
     def get_json(self):
         try:
@@ -74,6 +74,8 @@ class Dasher:
     def udisplay(self, site):
         if site['type'] == "mxplayer" or site['type'] == "stream":
             return self.mxplayer(site)
+        if site['type'] == "raspstill" or site['type'] == "usbcam":
+            self.webcam(site)
         else:
             self.chromedisplay(site)
             return int(site['time'])
@@ -82,6 +84,11 @@ class Dasher:
         self.tab.set_url(site['url'])
         sleep(1)
         self.tab.set_zoom(site['zoom'])
+
+    def webcam(self, site):
+
+        pic={'url': 'file://home/pi/dasher/screenshot/a.png', 'zoom': 1}
+        self.chromedisplay(pic)
 
     def mxplayer(self, site):
         if site['type'] == "stream":
