@@ -1,5 +1,5 @@
 #!/bin/python
-
+import datetime
 from time import sleep
 from chromote import Chromote
 import json
@@ -29,8 +29,7 @@ class Dasher:
         self.thread = None
         self.myid = os.getenv('MYID', self.getMAC(self.getId()))
         self.play_url = "{}/{}.json".format(self.get_srv_url(), self.myid)
-        if self.myid=="demo":
-            self.override_play_url("https://raw.githubusercontent.com/jakobant/dasher/master/demo.json")
+
 
     def override_play_url(self, url="https://elk.mikkari.net/roll/default.json"):
         self.play_url = url
@@ -55,6 +54,23 @@ class Dasher:
         return line[0:17].replace(":", "").strip()
 
     def get_json(self):
+        if self.myid=="local":
+            try:
+                print("Read local from cache")
+                f = open(self.home + "/.dash_cache", "r")
+                sites = json.loads(f.read())
+                f.close()
+            except:
+                self.override_play_url("https://raw.githubusercontent.com/jakobant/dasher/master/local.json")
+                req = urllib2.Request(self.play_url)
+                opener = urllib2.build_opener()
+                fq = opener.open(req)
+                sites = json.loads(fq.read())
+                f = open(self.home + "/.dash_cache", "w")
+                f.write(json.dumps(sites))
+                f.close()
+            return sites
+
         try:
             req = urllib2.Request(self.play_url)
             opener = urllib2.build_opener()
@@ -74,11 +90,11 @@ class Dasher:
     def udisplay(self, site):
         if site['type'] == "mxplayer" or site['type'] == "stream":
             return self.mxplayer(site)
-        if site['type'] == "raspstill" or site['type'] == "usbcam":
+        if site['type'] == "raspistill" or site['type'] == "usbcam":
             self.webcam(site)
         else:
             self.chromedisplay(site)
-            return int(site['time'])
+        return int(site['time'])
 
     def chromedisplay(self, site):
         self.tab.set_url(site['url'])
@@ -86,8 +102,14 @@ class Dasher:
         self.tab.set_zoom(site['zoom'])
 
     def webcam(self, site):
-
-        pic={'url': 'file://home/pi/dasher/screenshot/a.png', 'zoom': 1}
+        today = datetime.datetime.now()
+        dd_file = today.strftime('%Y-%m-%d_%H%M%S')
+        base_path = "./screenshots/{}".format(site['prefix'])
+        type = site['type']
+        device = site['device']
+        p = subprocess.Popen(["./utils/webcam_shot.sh", type, device, dd_file, base_path])
+        p.communicate()[0]
+        pic={'url': 'file://{}/{}/{}.png'.format(os.getcwd(), base_path, dd_file), 'zoom': 1}
         self.chromedisplay(pic)
 
     def mxplayer(self, site):
@@ -199,6 +221,8 @@ class Dasher:
         return int(h) * 3600 + int(m) * 60 + int(s)
 
     def get_srv_url(self):
+        if self.myid=="demo":
+            return "https://raw.githubusercontent.com/jakobant/dasher/master"
         try:
             domain = os.getenv('DOMAIN', 'mikkari.net')
             srv = srvlookup('dasher', domain=domain)[0]

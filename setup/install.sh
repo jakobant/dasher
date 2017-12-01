@@ -3,7 +3,7 @@
 git clone https://github.com/jakobant/dasher.git
 git clone https://github.com/jakobant/piwify.git
 
-sudo apt-get install imagemagick ffmpeg libav-tools -y
+sudo apt-get install imagemagick ffmpeg libav-tools fswebcam raspstill -y
 sudo pip install virtualenv
 
 cd dasher
@@ -34,7 +34,7 @@ cd /home/pi/dasher
 source /home/pi/dasher/venv/bin/activate
 while true
 do
-MYID="kobbi" /home/pi/dasher/venv/bin/python /home/pi/dasher/server.py
+MYID="demo" /home/pi/dasher/venv/bin/python /home/pi/dasher/server.py
 sleep 30
 done
 EOF
