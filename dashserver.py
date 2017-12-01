@@ -103,7 +103,7 @@ class Dasher:
 
     def webcam(self, site):
         today = datetime.datetime.now()
-        dd_file = today.strftime('%Y-%m-%d_%H%M%S')
+        dd_file = today.strftime('%Y-%m-%d-%H%M%S')
         base_path = "./screenshots/{}".format(site['prefix'])
         type = site['type']
         device = site['device']

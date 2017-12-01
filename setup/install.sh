@@ -1,5 +1,6 @@
 #!/bin/bash
 
+MYID=${1:-demo}
 git clone https://github.com/jakobant/dasher.git
 git clone https://github.com/jakobant/piwify.git
 
@@ -34,7 +35,7 @@ cd /home/pi/dasher
 source /home/pi/dasher/venv/bin/activate
 while true
 do
-MYID="demo" /home/pi/dasher/venv/bin/python /home/pi/dasher/server.py
+MYID="$MYID" /home/pi/dasher/venv/bin/python /home/pi/dasher/server.py
 sleep 30
 done
 EOF
@@ -46,5 +47,10 @@ sed -i 's/"exited_cleanly":false/"exited_cleanly":true/; s/"exit_type":"[^"]\+"/
 chromium-browser --kiosk --remote-debugging-port=9222 --no-default-browser-check --no-first-run --disable-infobars --disable-session-crashed-bubble
 EOF
 
+cat <<EOF>/tmp/c
+0 1 * * * /home/pi/dasher/utils/cron.sh
+EOF
+crontab /tmp/c
 
 chmod 755 /home/pi/dasher/*.sh
+
