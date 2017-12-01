@@ -4,7 +4,7 @@ MYID=${1:-demo}
 git clone https://github.com/jakobant/dasher.git
 git clone https://github.com/jakobant/piwify.git
 
-sudo apt-get install imagemagick ffmpeg libav-tools fswebcam raspstill -y
+sudo apt-get install imagemagick ffmpeg libav-tools fswebcam raspistill -y
 sudo pip install virtualenv
 
 cd dasher
