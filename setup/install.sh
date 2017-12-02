@@ -5,7 +5,7 @@ DOMAIN=${2:-no}
 git clone https://github.com/jakobant/dasher.git
 git clone https://github.com/jakobant/piwify.git
 
-sudo apt-get install imagemagick ffmpeg libav-tools fswebcam raspistill -y
+sudo apt-get install imagemagick ffmpeg libav-tools fswebcam -y
 sudo pip install virtualenv
 
 cd dasher
@@ -19,7 +19,7 @@ virtualenv venv
 source ./venv/bin/activate
 ./venv/bin/pip install -r requirements.txt
 
-if [ "$DOMAIN" -eq "no" ]; then
+if [ "$DOMAIN" == "no" ]; then
     STARTD="MYID=\"$MYID\""
 else
     STARTD="DOMAIN=\"$DOMAIN\" MYID=\"$MYID\""
