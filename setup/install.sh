@@ -1,6 +1,7 @@
 #!/bin/bash
 
 MYID=${1:-demo}
+DOMAIN=${2:-no}
 git clone https://github.com/jakobant/dasher.git
 git clone https://github.com/jakobant/piwify.git
 
@@ -18,6 +19,11 @@ virtualenv venv
 source ./venv/bin/activate
 ./venv/bin/pip install -r requirements.txt
 
+if [ "$DOMAIN" -eq "no" ]; then
+    STARTD="MYID=\"$MYID\""
+else
+    STARTD="DOMAIN=\"$DOMAIN\" MYID=\"$MYID\""
+fi
 cat <<EOF>/home/pi/.config/lxsession/LXDE-pi/autostart
 @lxpanel --profile LXDE-pi
 @pcmanfm --desktop --profile LXDE-pi
@@ -35,7 +41,7 @@ cd /home/pi/dasher
 source /home/pi/dasher/venv/bin/activate
 while true
 do
-MYID="$MYID" /home/pi/dasher/venv/bin/python /home/pi/dasher/server.py
+$STARTD /home/pi/dasher/venv/bin/python /home/pi/dasher/server.py
 sleep 30
 done
 EOF
