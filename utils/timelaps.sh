@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 cd /home/pi/dasher
 
@@ -26,7 +25,7 @@ find $FULLPATH -type f -size -100k -name '$DD*.png' -exec rm {} \;
 
 cd $FULLPATH
 tar cvf ${DD}_backup.tar $DD*.png
-ls $DD*.png| awk 'BEGIN{ a=0 }{ printf "cp %s timelaps%04d.png\n", $0, a++ }'| bash
+ls $DD*.png| awk 'BEGIN{ a=0 }{ printf "mv %s timelaps%04d.png\n", $0, a++ }'| bash
 COUNT=`ls timelaps*png|wc -w`
 if [ $COUNT -gt 700 ]; then
     FRAMES=10

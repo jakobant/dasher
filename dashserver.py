@@ -70,7 +70,7 @@ class Dasher:
                 sites = json.loads(f.read())
                 f.close()
             except:
-                self.override_play_url("https://raw.githubusercontent.com/jakobant/dasher/master/local.json")
+                self.override_play_url("https://raw.githubusercontent.com/jakobant/dasher/master/artifacts/local.json")
                 req = urllib2.Request(self.play_url)
                 opener = urllib2.build_opener()
                 fq = opener.open(req)
@@ -229,13 +229,16 @@ class Dasher:
         if self.myid=="demo":
             return "https://raw.githubusercontent.com/jakobant/dasher/master/artifacts"
         try:
-            domain = os.getenv('DOMAIN', 'mikkari.net')
-            srv = srvlookup('dasher', domain=domain)[0]
+            domain = os.getenv('DOMAIN')
+            if domain:
+                srv = srvlookup.lookup('dasher', domain=domain)[0]
+            else:
+                srv = srvlookup.lookup('dasher')[0]
             if srv.port == 443:
                 url = "https://{}/artifacts".format(srv.host)
             else:
                 url = "http://{}:{}/artifacts".format(srv.host, srv.port)
             return url
         except:
-            return "https://elk.mikkari.net/artifacts"
+            return "https://dasher.mikkari.net/artifacts"
 
