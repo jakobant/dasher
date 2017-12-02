@@ -177,9 +177,11 @@ def add_playlist():
         screenshot = request.args.get('screenshot')
         delay = request.args.get('delay')
         prefix = request.args.get('prefix')
-        json = {'url': url, 'time': time, 'startat': startat, 'type': type, 'zoom': zoom, 'screenshot': screenshot, 'delay': delay, 'prefix': prefix}
+        device = request.args.get('device')
+        json = {'url': url, 'time': time, 'startat': startat, 'type': type, 'zoom': zoom, 'screenshot': screenshot, 'delay': delay, 'prefix': prefix, 'device': device}
         print (json['url'])
         looper.add_to_playlist(json)
+        dasher.save_json(looper.sites)
         return make_response(jsonify({'result': 'Success'}), 200)
     else:
         return make_response(jsonify({'result': 'Error missing data'}), 200)

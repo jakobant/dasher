@@ -53,6 +53,16 @@ class Dasher:
             line = "000000000000"
         return line[0:17].replace(":", "").strip()
 
+    def save_json(self, sites):
+        try:
+            f = open(self.home + "/.dash_cache", "w")
+            f.write(json.dumps(sites, indent=4))
+            f.close()
+        except:
+            None
+        return sites
+
+
     def get_json(self):
         if self.myid=="local":
             try:
@@ -67,7 +77,7 @@ class Dasher:
                 fq = opener.open(req)
                 sites = json.loads(fq.read())
                 f = open(self.home + "/.dash_cache", "w")
-                f.write(json.dumps(sites))
+                f.write(json.dumps(sites, indent=4))
                 f.close()
             return sites
 
@@ -77,7 +87,7 @@ class Dasher:
             fq = opener.open(req)
             sites = json.loads(fq.read())
             f = open(self.home + "/.dash_cache", "w")
-            f.write(json.dumps(sites))
+            f.write(json.dumps(sites, indent=4))
             f.close()
         except Exception as e:
             print(e)
