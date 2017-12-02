@@ -10,7 +10,7 @@ if [ -f /etc/fedora-release ]; then
 	gnome-screenshot -f ${DD}.png
 	mogrify -font Liberation-Sans -fill yellow -undercolor "#00000080" -pointsize 26 -annotate +30+30 "`date`" ${DD}.png
 	mv ${DD}.png ./screenshots/$PRE
-elif [ -f /etc/redat-release ]; then
+elif [ -f /etc/lsb-release ]; then
 	gnome-screenshot -f ${DD}.png
 	mogrify -font Liberation-Sans -fill yellow -undercolor "#00000080" -pointsize 26 -annotate +30+30 "`date`" ${DD}.png
 	mv ${DD}.png ./screenshots/$PRE

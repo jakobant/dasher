@@ -1,6 +1,7 @@
 #!/bin/bash
+set -x
 
-echo $#
+cd /home/pi/dasher
 
 if [ "$#" -le 0 ]; then
     echo "Illegal number of parameters"
@@ -10,7 +11,7 @@ fi
 
 BASEPATH=$1
 FULLPATH="./screenshots/$1"
-
+FRAMES=${FRAMES:-5}
 if [ ! -d "$FULLPATH" ]; then
     echo "Directory $FULLPATH does not exist!!"
     exit 1
@@ -21,20 +22,22 @@ else
     DD=`date +%Y-%m-%d --date="1 days ago"`
 fi
 
-find $FULLPATH -type f -size -270k -name '$DD*.png' -exec rm {} \;
+find $FULLPATH -type f -size -100k -name '$DD*.png' -exec rm {} \;
 
 cd $FULLPATH
+tar cvf ${DD}_backup.tar $DD*.png
 ls $DD*.png| awk 'BEGIN{ a=0 }{ printf "cp %s timelaps%04d.png\n", $0, a++ }'| bash
-
-ffmpeg -y -r 5 -pattern_type glob -i '*.png' -i timelaps%04d.png -c:v copy ${DD}_${BASEPATH}_timelaps.avi
-
-rm -f timelaps*png
+COUNT=`ls timelaps*png|wc -w`
+if [ $COUNT -gt 700 ]; then
+    FRAMES=10
+fi
 
 if [ -f /etc/fedora-release ]; then
-	ffmpeg -y -i ${DD}_${BASEPATH}_timelaps.avi -c:v libx264 -preset slow -crf 15 ${DD}_${BASEPATH}_timelaps_final.mp4
-elif [ -f /etc/redat-release ]; then
-	ffmpeg -y -i ${DD}_${BASEPATH}_timelaps.avi -c:v libx264 -preset slow -crf 15 ${DD}_${BASEPATH}_timelaps_final.mp4
+	ffmpeg -y -r $FRAMES -start_number 0 -i 'timelaps%04d.png' -c:v libx264 -pix_fmp yuv420p -preset slow -crf 15 ${DD}_${BASEPATH}_timelaps_final.mp4
+elif [ -f /etc/lsb-release  ]; then
+	ffmpeg -y -r $FRAMES -start_number 0 -i 'timelaps%04d.png' -c:v libx264 -pix_fmt yuv420p -preset slow -crf 15 ${DD}_${BASEPATH}_timelaps_final.mp4
 else
-	avconv -y -r 10 -i ${DD}_${BASEPATH}_timelaps.avi -r 10 -vcodec libx264 -pix_fmt yuv420p -q:v 20 -vf scale=1280:720 ${DD}_${BASEPATH}_timelaps_final.mp4
+	avconv -y -r $FRAMES -i timelaps%04d.png -r $FRAMES -vcodec libx264 -pix_fmt yuv420p -q:v 20 -vf scale=1280:720 ${DD}_${BASEPATH}_timelaps_final.mp4
 fi
-rm -f ${DD}_${BASEPATH}_timelaps.avi
+
+rm -f timelaps*png

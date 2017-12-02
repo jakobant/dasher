@@ -11,13 +11,12 @@ import srvlookup
 import os
 import pafy
 
+"""{"sites": [{"url": "https://storage.googleapis.com/cdn.thenewstack.io/media/2016/02/lithium-dashboard-1024x529.png", "time": 10, "type": "chrome", "zoom": 1, "screenshot": "false", "delay": "0", "device": "0", "prefix": "geo", "startat": "00:00:00" },
+  {"url": "https://datadog-prod.imgix.net/img/blog/monitor-cloud-foundry/cloud-foundry-dashboard.png?fit=max", "time": 10, "type": "chrome", "zoom": 1, "screenshot": "false", "delay": "0", "device": "0", "prefix": "geo", "startat": "00:00:00" },
+  {"url": "https://ga1.imgix.net/screenshot/o/91489-1454960580-6049945?ixlib=rb-1.0.0&ch=Width%2CDPR&auto=format", "time": 10, "type": "chrome", "zoom": 1, "screenshot": "false", "delay": "0", "device": "0", "prefix": "geo", "startat": "00:00:00" },
+  {"url": "http://play.grafana.org/dashboard/db/big-dashboard?orgId=1", "time": 60, "type": "chrome", "zoom": 1, "screenshot": "true", "delay": "22", "device": "0", "prefix": "grafana", "startat": "00:00:00" },
+  {"url": "https://www.youtube.com/watch?v=Gam5iWi4R_M", "time": 67, "type": "mxplayer", "zoom": 1, "screenshot": "false", "delay": "22", "device": "0", "prefix": "grafana", "startat": "00:00:00" } ]}
 """
-sitess = { "sites": [
-{ "url": "http://www.mbl.is", "time": 12, "type": "chrome", "zoom": 1.3 },
-{ "url": "https://www.youtube.com/watch?v=qRfnQn0g5-Q", "time": 20, "type": "mxplayer", "zoom": 1, "startat": "00:06:00" },
-{ "url": "http://www.cnn.com", "time": 20, "type": "chrome", "zoom": 1.5 }
-] }"""
-
 
 class Dasher:
     def __init__(self, player, home):
@@ -28,10 +27,10 @@ class Dasher:
         self.one_player = None
         self.thread = None
         self.myid = os.getenv('MYID', self.getMAC(self.getId()))
-        self.play_url = "{}/{}.json".format(self.get_srv_url(), self.myid)
+        self.play_url = "{}/artifacts/{}.json".format(self.get_srv_url(), self.myid)
 
 
-    def override_play_url(self, url="https://elk.mikkari.net/roll/default.json"):
+    def override_play_url(self, url="https://elk.mikkari.net/artifacts/default.json"):
         self.play_url = url
 
     def getId(self):
@@ -144,8 +143,6 @@ class Dasher:
                 subprocess.Popen(["mplayer", "-fs", file, "-ss", start])
             else:
                 subprocess.Popen(["omxplayer", "-o", "hdmi", "-b", file, "-l", start])
-        # self.thread = threading.Timer(time, self.kill_mxplayer)
-        # self.thread.start()
         return time
 
     def kill_mxplayer(self):
@@ -160,8 +157,6 @@ class Dasher:
 
     def get_download_file(self, id_file):
         file = glob.glob(self.home + "/Downloads/%s.mp4" % id_file)
-        # print (file)
-        # print (self.home+"/Downloads/%s.mp4" % id_file)
         if len(file) > 0:
             return file[0]
         file = glob.glob(self.home + "/Downloads/%s*part*" % id_file)
@@ -232,22 +227,15 @@ class Dasher:
 
     def get_srv_url(self):
         if self.myid=="demo":
-            return "https://raw.githubusercontent.com/jakobant/dasher/master"
+            return "https://raw.githubusercontent.com/jakobant/dasher/master/artifacts"
         try:
             domain = os.getenv('DOMAIN', 'mikkari.net')
             srv = srvlookup('dasher', domain=domain)[0]
             if srv.port == 443:
-                url = "https://{}/roll".format(srv.host)
+                url = "https://{}/artifacts".format(srv.host)
             else:
-                url = "http://{}:{}/roll".format(srv.host, srv.port)
+                url = "http://{}:{}/artifacts".format(srv.host, srv.port)
             return url
         except:
-            return "https://elk.mikkari.net/roll"
+            return "https://elk.mikkari.net/artifacts"
 
-            # while True:
-        #    pl = Dasher("mplayer", "/Users/jakobant")
-        #    sites = pl.get_json()
-        #    for site in sites['sites']:
-        #        pl.udisplay(site)
-        #        sleep(10)
-        # sleep(int(site['time']))
