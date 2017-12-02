@@ -27,7 +27,7 @@ class Dasher:
         self.one_player = None
         self.thread = None
         self.myid = os.getenv('MYID', self.getMAC(self.getId()))
-        self.play_url = "{}/artifacts/{}.json".format(self.get_srv_url(), self.myid)
+        self.play_url = "{}/{}.json".format(self.get_srv_url(), self.myid)
 
 
     def override_play_url(self, url="https://elk.mikkari.net/artifacts/default.json"):
