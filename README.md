@@ -44,7 +44,7 @@ To install dashboard to look for remote config.  This example uses the domain: l
 id: itscreen1.  The DashScreenOs will look for DNS SRV record _dasher._tcp.local.it for the 
 remote path config.  DNS SRV record : _dasher._tcp.local.it,screens.local.it,8080 . The 
 DashScreenOS fetches ```http://screens.local.it:8080/artifacts/itscreen1.json``` for examples see
-[Sceens artifacts](/master/artifacts)
+[Sceens artifacts](/artifacts)
 ```bash
 wget https://raw.githubusercontent.com/jakobant/dasher/master/setup/install.sh
 #bash ./install.sh <id> <domain>
