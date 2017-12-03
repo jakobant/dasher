@@ -5,7 +5,12 @@ DOMAIN=${2:-no}
 git clone https://github.com/jakobant/dasher.git
 git clone https://github.com/jakobant/piwify.git
 
-sudo apt-get install imagemagick ffmpeg libav-tools fswebcam -y
+TOOLS="imagemagick ffmpeg libav-tools fswebcam"
+for tool in $TOOLS
+do
+    sudo apt-get install $tool -y
+done
+
 sudo pip install virtualenv
 
 cd dasher
