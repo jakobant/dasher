@@ -19,6 +19,37 @@ create timelaps videos
  7. Capture images from webcam or Raspberry Pi Camera.
  8. Creates time laps videos from screenshots and webcam images.
  9. Simple UI for screenshots and timelaps view and control.
+ 
+### Play list json tags descriptions:
+There few basic type for a playlist acton tag, ```chrome, mxplayer, stream, raspitill and usbcam```, 
+rest of the tags do have different meaning depending on the tags:
+ - **type:** playlist type as described before.
+ - **url:** url to display, media or stream.
+ - **time:** how long the type is displayed, this is seconds.
+ - **zoom:** browser zoom in or out, (0.9 = 90% zoom), only used with chrome type.
+ - **screenshot:** true/false, screenshot can be used with all types, but only logical with chrome.
+ - **delay:** the delay for the screenshot, chrome can take many seconds to fully load a page.
+ - **prefix:** the folder name for the screenshots, when creating a timelaps video from screenshots
+ it is good to have this uniq.
+ - **startat:** used with mxplayer, when playing videos we can start playing in 00:01:00, the time to play 
+ the video is controled by the time tag. This is only used in mxplayer and stream.
+ - **device** this is the device number for usbcam screenshots. There can be multiple usbcam
+ connected and used.
+
+**Type descriptions**
+ - **chrome** the chrome browser is remote controlled to display a url and zoom, tags used with
+ this type are url, zoom, time, screenshot, delay and prefix.
+ - **mxplayer** the default mxplayer is omxplayer for Raspberry Pi, the player type can be set
+ with the environment MPLAYER to mplayer for Fedora, Ubuntu and MacOS. This type will cache the
+ youtube and facebook videos locally. The url played here are browser urls ```https://www.youtube.com/watch?v=l2VCPDboU6k```
+ this media type can be a video off a Power point show or some other magical message that you want
+ to display, tags used with this type are url, startat, time (recommend to set screenshot to false).
+ - **stream** the player is the same as mxplayer with this type, here the player is set to play direct 
+ url stream for a video, tags used with this type are url, startat, time (recommend to set screenshot to false).
+ - **raspistill** the raspistill will take a image shot from the Raspberry Pi camera and store with the 
+ prefix tag. Tags used with this type are prefix and time.
+ - **usbcam** a usbcam will take a image shot with fswebcam and store with the prefix tag. Tags used 
+ with this type are prefix, time and device.
 
 ### Install to Rarspberry Pi
 Install the demo dashboard, it will rotate the demo.json configuration.
@@ -50,13 +81,14 @@ wget https://raw.githubusercontent.com/jakobant/dasher/master/setup/install.sh
 #bash ./install.sh <id> <domain>
 bash ./install.sh itscreen1 local.it
 ```
+### Development on Ubuntu or Fedora
+
+[Local Developnet Fedora/Ubuntu](/setup/Development.md)
 
 ### Demo content
 ```json
 {"sites": [
   {"url": "https://storage.googleapis.com/cdn.thenewstack.io/media/2016/02/lithium-dashboard-1024x529.png", "time": 20, "type": "chrome", "zoom": 1, "screenshot": "false", "delay": "22", "device": "0", "prefix": "geo", "startat": "00:00:00" },
-  {"url": "https://datadog-prod.imgix.net/img/blog/monitor-cloud-foundry/cloud-foundry-dashboard.png?fit=max", "time": 20, "type": "chrome", "zoom": 1, "screenshot": "false", "delay": "22", "device": "0", "prefix": "geo", "startat": "00:00:00" },
-  {"url": "https://ga1.imgix.net/screenshot/o/91489-1454960580-6049945?ixlib=rb-1.0.0&ch=Width%2CDPR&auto=format", "time": 20, "type": "chrome", "zoom": 1, "screenshot": "false", "delay": "22", "device": "0", "prefix": "geo", "startat": "00:00:00" },
   {"url": "http://play.grafana.org/dashboard/db/big-dashboard?orgId=1", "time": 60, "type": "chrome", "zoom": 1, "screenshot": "true", "delay": "22", "device": "0", "prefix": "grafana", "startat": "00:00:00" },
   {"url": "https://www.youtube.com/watch?v=Gam5iWi4R_M", "time": 67, "type": "mxplayer", "zoom": 1, "screenshot": "false", "delay": "22", "device": "0", "prefix": "grafana", "startat": "00:00:00" },
   {"url": "", "time": 20, "type": "usbcam", "zoom": 1, "screenshot": "false", "delay": "22", "device": "0", "prefix": "usbcam", "startat": "00:00:00" }
