@@ -11,5 +11,5 @@ if [ "$type" == "raspistill" ]; then
 fi
 
 if [ "$type" == "usbcam" ]; then
-  fswebcam -d /dev/video$device -r 2592x1944 --png 9 --save $base_path/$bfile.png
+  fswebcam -S 40 -d /dev/video$device -r 2592x1944 --png 9 --save $base_path/$bfile.png
 fi
