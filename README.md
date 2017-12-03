@@ -10,15 +10,15 @@ create timelaps videos
 ## Dasher
  Features
 
- 1. Simple setup.
+ 1. Simple setup, will for Raspberry Pi, Ubuntu like and Fedora like OS.
  2. Chrome browser in kiosk mode with local remote control.
  3. Local API to allow remote control, i.e. send a video override for the screen.
  4. Local cache for youtube/facebook videos.
- 5. Does not depend on remote server setup.
- 6. Timed screenshots support.
+ 5. Does not depend on remote server setup, but designed to look for it.
+ 6. Timed screenshots support for displayed screens.
  7. Capture images from webcam or Raspberry Pi Camera.
  8. Creates time laps videos from screenshots and webcam images.
-
+ 9. Simple UI for screenshots and timelaps view and control.
 
 ### Install to Rarspberry Pi
 Install the demo dashboard, it will rotate the demo.json configuration.
@@ -33,7 +33,18 @@ bash ./install.sh local
 ```
 That dashboard will install the local.json configuration.  This setup does allow the
 install that config only once to allow local updates, this enables the setup as a local
-DS Dashboard OS.
+DashScreenOS.
+
+To install dashboard to look for remote config.  This example uses the domain: local.it, and 
+id: itscreen1.  The DashScreenOs will look for DNS SRV record _dasher._tcp.local.it for the 
+remote path config.  DNS SRV record : _dasher._tcp.local.it,screens.local.it,8080 . The 
+DashScreenOS fetches http://screens.local.it:8080/artifacts/itscreen1.json for examples see
+[Sceens artifacts](/jakobant/dasher/tree/master/artifacts)
+```bash
+wget https://raw.githubusercontent.com/jakobant/dasher/master/setup/install.sh
+#bash ./install.sh <id> <domain>
+bash ./install.sh itscreen1 local.it
+```
 
 ### Demo content
 ```json
@@ -46,6 +57,12 @@ DS Dashboard OS.
   {"url": "", "time": 20, "type": "usbcam", "zoom": 1, "screenshot": "false", "delay": "22", "device": "0", "prefix": "usbcam", "startat": "00:00:00" }
 ]}
 ```
+### Example timelaps videos created with DashScreenOS
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=ker6GrcVjL4" target="_blank"><img src="http://img.youtube.com/vi/ker6GrcVjL4/0.jpg"
+alt="Kibana Netflow GEO Dashboard" width="480" height="360" border="1" /></a>
+ker6GrcVjL4
+
+### Other fun demo
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=Gam5iWi4R_M" target="_blank"><img src="http://img.youtube.com/vi/Gam5iWi4R_M/0.jpg"
 alt="Grafana development .." width="480" height="360" border="1" /></a>
