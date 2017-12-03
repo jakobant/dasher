@@ -83,7 +83,7 @@ bash ./install.sh itscreen1 local.it
 ```
 ### Development on Ubuntu or Fedora
 
-[Local Developnet Fedora/Ubuntu](/setup/Development.md)
+[Local Development Ubuntu / Fedora / MacOS](/setup/Development.md)
 
 ### Demo content
 ```json
