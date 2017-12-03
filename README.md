@@ -23,11 +23,16 @@ create timelaps videos
 ### Install to Rarspberry Pi
 Install the demo dashboard, it will rotate the demo.json configuration.
 
+Run:
 ```bash
 wget https://raw.githubusercontent.com/jakobant/dasher/master/setup/install.sh
 bash ./install.sh
 ```
-To install the local dashboard run:
+To install the local dashboard to use local configuration, This setup does allow the
+install that config only once to allow local updates, this enables the setup as a local
+DashScreenOS, it initialy fetches the local.json as template.
+
+Run:
 ```bash
 bash ./install.sh local
 ```
@@ -38,8 +43,8 @@ DashScreenOS.
 To install dashboard to look for remote config.  This example uses the domain: local.it, and 
 id: itscreen1.  The DashScreenOs will look for DNS SRV record _dasher._tcp.local.it for the 
 remote path config.  DNS SRV record : _dasher._tcp.local.it,screens.local.it,8080 . The 
-DashScreenOS fetches http://screens.local.it:8080/artifacts/itscreen1.json for examples see
-[Sceens artifacts](/jakobant/dasher/tree/master/artifacts)
+DashScreenOS fetches ```http://screens.local.it:8080/artifacts/itscreen1.json``` for examples see
+[Sceens artifacts](../blob/master/artifacts)
 ```bash
 wget https://raw.githubusercontent.com/jakobant/dasher/master/setup/install.sh
 #bash ./install.sh <id> <domain>
