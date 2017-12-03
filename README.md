@@ -66,8 +66,7 @@ bash ./install.sh itscreen1 local.it
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=ker6GrcVjL4" target="_blank"><img src="http://img.youtube.com/vi/ker6GrcVjL4/0.jpg"
 alt="Kibana Netflow GEO Dashboard" width="480" height="360" border="1" /></a>
-ker6GrcVjL4
 
-### Other fun demo
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=Gam5iWi4R_M" target="_blank"><img src="http://img.youtube.com/vi/Gam5iWi4R_M/0.jpg"
-alt="Grafana development .." width="480" height="360" border="1" /></a>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=l2VCPDboU6k" target="_blank"><img src="http://img.youtube.com/vi/l2VCPDboU6k/0.jpg"
+alt="DataDog timelaps dashboard" width="480" height="360" border="1" /></a>
+
