@@ -1,14 +1,10 @@
 #!flask/bin/python
 from flask import Flask, jsonify, Response
 from flask_httpauth import HTTPBasicAuth
-#from flask.ext.httpauth import HTTPBasicAuth
 from flask import render_template
 from flask import make_response
 from flask import request
-import os
 from dashserver import Dasher
-from time import sleep
-import json
 import threading, os, glob
 
 auth = HTTPBasicAuth()
