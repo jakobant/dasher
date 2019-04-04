@@ -15,10 +15,10 @@ MarkupSafe==1.0
 packaging==16.8
 pafy==0.5.3.1
 pyparsing==2.2.0
-requests==2.18.4
+requests>=2.20.0
 six==1.11.0
 srvlookup==1.0.0
-urllib3==1.22
+urllib3>=1.23
 websocket-client==0.44.0
 Werkzeug==0.12.2
 youtube-dl==2017.11.15

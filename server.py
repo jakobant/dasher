@@ -75,7 +75,7 @@ class Loop:
         time = self.dasher.udisplay(site)
         self.thread = threading.Timer(time, self.start)
         self.thread.start()
-        if site['screenshot'] == 'true':
+        if 'screenshot' in site and site['screenshot'] == 'true':
             self.dasher.get_screenshot(site['delay'], site['prefix'] )
         return site
 
