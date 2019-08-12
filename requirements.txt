@@ -5,11 +5,11 @@ chardet==3.0.4
 chromote==0.3.0
 click==6.7
 dnspython==1.15.0
-Flask==0.12.2
+Flask>=1.0.0
 Flask-HTTPAuth==3.2.3
 idna==2.6
 itsdangerous==0.24
-Jinja2==2.10
+Jinja2>=2.10.1
 jsonify==0.5
 MarkupSafe==1.0
 packaging==16.8
