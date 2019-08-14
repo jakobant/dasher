@@ -20,5 +20,5 @@ six==1.11.0
 srvlookup==1.0.0
 urllib3>=1.23
 websocket-client==0.44.0
-Werkzeug==0.12.2
-youtube-dl==2017.11.15
+Werkzeug>=0.15.0
+youtube-dl>=2017.11.15

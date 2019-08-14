@@ -29,6 +29,7 @@ if [ "$DOMAIN" == "no" ]; then
 else
     STARTD="DOMAIN=\"$DOMAIN\" MYID=\"$MYID\""
 fi
+mkdir -p /home/pi/.config/lxsession/LXDE-pi/
 cat <<EOF>/home/pi/.config/lxsession/LXDE-pi/autostart
 @lxpanel --profile LXDE-pi
 @pcmanfm --desktop --profile LXDE-pi
