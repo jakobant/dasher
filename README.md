@@ -8,7 +8,7 @@ is also capable off capture timelaps images form USB Webcam or Raspberry Pi came
 create timelaps videos
 
 ## Dasher
- Features
+ Features-
 
  1. Simple setup, will for Raspberry Pi, Ubuntu like and Fedora like OS.
  2. Chrome browser in kiosk mode with local remote control.
